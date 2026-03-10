@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { Suspense, useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { Card, CardContent } from "@/components/ui/card"
@@ -23,7 +23,7 @@ type ViewMode = "semana" | "dia" | "mes"
 
 const emptyForm = { paciente_id: "", data: "", hora: "", procedimento_tipo_id: "", observacoes: "", valor: "" }
 
-export default function AgendaPage() {
+function AgendaContent() {
   const supabase = createClient()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -451,5 +451,13 @@ export default function AgendaPage() {
 
       </div>
     </div>
+  )
+}
+
+export default function AgendaPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center">Carregando agenda...</div>}>
+      <AgendaContent />
+    </Suspense>
   )
 }
