@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from "react"
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
@@ -7,7 +8,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Check, Calendar, MessageCircle, ArrowRight } from "lucide-react"
 
-export default function CadastroSucessoPage() {
+function SucessoContent() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get("session_id")
   const [contador, setContador] = useState(5)
@@ -35,7 +36,6 @@ export default function CadastroSucessoPage() {
         transition={{ duration: 0.4 }}
         className="w-full max-w-md rounded-2xl bg-white p-10 text-center shadow-xl"
       >
-        {/* Ícone animado */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -52,7 +52,6 @@ export default function CadastroSucessoPage() {
           Seu cartão foi cadastrado com sucesso. Você tem <strong>14 dias grátis</strong> para testar tudo — sem cobranças agora.
         </p>
 
-        {/* Próximos passos */}
         <div className="mt-8 space-y-3 text-left">
           <p className="text-sm font-semibold uppercase tracking-wide text-gray-400">Próximos passos</p>
           <div className="flex items-start gap-3 rounded-xl bg-gray-50 p-4">
@@ -85,5 +84,13 @@ export default function CadastroSucessoPage() {
         )}
       </motion.div>
     </div>
+  )
+}
+
+export default function CadastroSucessoPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Carregando...</div>}>
+      <SucessoContent />
+    </Suspense>
   )
 }
