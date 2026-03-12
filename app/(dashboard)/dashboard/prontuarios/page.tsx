@@ -13,13 +13,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, User, FileText, Calendar, Plus, Clock, Save, CheckCircle2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 
-const toothStatusMap: Record<string, { color: string; bg: string; label: string }> = {
-  saudavel:  { color: "border-emerald-400", bg: "bg-emerald-100", label: "Saudável" },
-  tratado:   { color: "border-blue-400",    bg: "bg-blue-100",    label: "Tratado" },
-  carie:     { color: "border-amber-400",   bg: "bg-amber-100",   label: "Cárie" },
-  extracao:  { color: "border-red-400",     bg: "bg-red-100",     label: "Extração" },
-  implante:  { color: "border-purple-400",  bg: "bg-purple-100",  label: "Implante" },
-  coroa:     { color: "border-cyan-400",    bg: "bg-cyan-100",    label: "Coroa" },
+const toothStatusMap: Record<string, { borderColor: string; bgColor: string; dotColor: string; label: string }> = {
+  saudavel:  { borderColor: "#34d399", bgColor: "#d1fae5", dotColor: "#34d399", label: "Saudável" },
+  tratado:   { borderColor: "#60a5fa", bgColor: "#dbeafe", dotColor: "#60a5fa", label: "Tratado" },
+  carie:     { borderColor: "#fbbf24", bgColor: "#fef3c7", dotColor: "#fbbf24", label: "Cárie" },
+  extracao:  { borderColor: "#f87171", bgColor: "#fee2e2", dotColor: "#f87171", label: "Extração" },
+  implante:  { borderColor: "#c084fc", bgColor: "#f3e8ff", dotColor: "#c084fc", label: "Implante" },
+  coroa:     { borderColor: "#22d3ee", bgColor: "#cffafe", dotColor: "#22d3ee", label: "Coroa" },
 }
 
 const upperTeeth = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28]
@@ -210,7 +210,7 @@ export default function ProntuariosPage() {
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(toothStatusMap).map(([k,v]) => (
                     <div key={k} className="flex items-center gap-1">
-                      <div className={`h-3 w-3 rounded-sm ${v.bg} border ${v.color}`} />
+                      <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: v.bgColor, border: `1.5px solid ${v.borderColor}` }} />
                       <span className="text-xs text-muted-foreground">{v.label}</span>
                     </div>
                   ))}
@@ -221,7 +221,8 @@ export default function ProntuariosPage() {
                 <div className="flex justify-center gap-1 flex-wrap">
                   {upperTeeth.map(num => { const s = getToothStyle(num); return (
                     <button key={num} onClick={() => abrirDialogDente(num)}
-                      className={`relative flex h-12 w-8 flex-col items-center justify-center rounded-md border-2 transition-all hover:scale-110 ${s.bg} ${s.color} ${denteSelecionado===num ? "ring-2 ring-[#00C9A7] ring-offset-2" : ""}`}>
+                      style={{ backgroundColor: s.bgColor, borderColor: denteSelecionado===num ? "#00C9A7" : s.borderColor, outlineColor: denteSelecionado===num ? "#00C9A7" : undefined }}
+                      className={`relative flex h-12 w-8 flex-col items-center justify-center rounded-md border-2 transition-all hover:scale-110 ${denteSelecionado===num ? "ring-2 ring-[#00C9A7] ring-offset-2" : ""}`}>
                       <span className="text-xs font-medium">{num}</span>
                     </button>
                   )})}
@@ -230,7 +231,8 @@ export default function ProntuariosPage() {
                 <div className="flex justify-center gap-1 flex-wrap">
                   {lowerTeeth.map(num => { const s = getToothStyle(num); return (
                     <button key={num} onClick={() => abrirDialogDente(num)}
-                      className={`relative flex h-12 w-8 flex-col items-center justify-center rounded-md border-2 transition-all hover:scale-110 ${s.bg} ${s.color} ${denteSelecionado===num ? "ring-2 ring-[#00C9A7] ring-offset-2" : ""}`}>
+                      style={{ backgroundColor: s.bgColor, borderColor: denteSelecionado===num ? "#00C9A7" : s.borderColor }}
+                      className={`relative flex h-12 w-8 flex-col items-center justify-center rounded-md border-2 transition-all hover:scale-110 ${denteSelecionado===num ? "ring-2 ring-[#00C9A7] ring-offset-2" : ""}`}>
                       <span className="text-xs font-medium">{num}</span>
                     </button>
                   )})}
