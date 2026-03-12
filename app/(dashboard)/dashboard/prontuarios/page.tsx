@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -51,6 +51,9 @@ export default function ProntuariosPage() {
 
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   useEffect(() => { initTenant() }, [])
 
@@ -69,19 +72,25 @@ export default function ProntuariosPage() {
   }
 
   async function adicionarProcedimento() {
-    if (!pacienteSelecionado || !tenantId || !dentistId || !addProcForm.data || !addProcForm.hora) return
+    const errors: Record<string, string> = {}
+    if (!addProcForm.procedimento_tipo_id) errors.procedimento = "Selecione um procedimento"
+    if (!addProcForm.data) errors.data = "Informe a data"
+    if (!addProcForm.hora) errors.hora = "Informe o horário"
+    if (Object.keys(errors).length > 0) { setFormErrors(errors); return }
+    setFormErrors({})
+    if (!pacienteSelecionado || !tenantId || !dentistId) return
     setSaving(true)
     const proc = procedimentos.find(p => p.id === addProcForm.procedimento_tipo_id)
     await supabase.from("consultas").insert({
       tenant_id: tenantId, paciente_id: pacienteSelecionado.id, dentista_id: dentistId,
       procedimento_tipo_id: addProcForm.procedimento_tipo_id || null,
-      data_hora: `${addProcForm.data}T${addProcForm.hora}:00`,
+      data_hora: `${addProcForm.data}T${addProcForm.hora}:00.000-03:00`,
       duracao_minutos: 30,
       valor: addProcForm.valor ? parseFloat(addProcForm.valor) : (proc?.valor_padrao || null),
       observacoes: addProcForm.observacoes || null, status: "concluida"
     })
     await selecionarPaciente(pacienteSelecionado)
-    setIsAddProcOpen(false); setAddProcForm({ procedimento_tipo_id: "", data: "", hora: "", valor: "", observacoes: "" }); setSaving(false)
+    setIsAddProcOpen(false); setAddProcForm({ procedimento_tipo_id: "", data: "", hora: "", valor: "", observacoes: "" }); setFormErrors({}); setSaving(false)
   }
 
   async function selecionarPaciente(p: Paciente) {
@@ -118,7 +127,11 @@ export default function ProntuariosPage() {
     } else {
       await supabase.from("dentes").insert({ tenant_id: tenantId, paciente_id: pacienteSelecionado.id, numero_dente: denteSelecionado, status: novoStatus, observacoes: obsObservacao })
     }
-    await selecionarPaciente(pacienteSelecionado)
+    // Refetch dentes explicitamente para garantir atualização do odontograma
+    const { data: dentesData } = await supabase.from("dentes").select("*").eq("paciente_id", pacienteSelecionado.id)
+    const dentesMap: Record<number, Dente> = {}
+    if (dentesData) dentesData.forEach(d => { dentesMap[d.numero_dente] = d })
+    setDentes(dentesMap)
     setSaving(false); setSaved(true)
     setTimeout(() => { setSaved(false); setIsToothDialogOpen(false) }, 1200)
   }
@@ -138,7 +151,7 @@ export default function ProntuariosPage() {
 
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col" suppressHydrationWarning>
       <DashboardHeader title="Prontuários" />
       <div className="flex-1 p-4 lg:p-6">
 
@@ -367,21 +380,25 @@ export default function ProntuariosPage() {
                 <Select value={addProcForm.procedimento_tipo_id} onValueChange={v => {
                   const proc = procedimentos.find(p => p.id === v)
                   setAddProcForm(f => ({...f, procedimento_tipo_id: v, valor: proc?.valor_padrao?.toString() || ""}))
+                  setFormErrors(e => ({...e, procedimento: ""}))
                 }}>
-                  <SelectTrigger><SelectValue placeholder="Selecionar procedimento" /></SelectTrigger>
+                  <SelectTrigger className={formErrors.procedimento ? "border-red-500" : ""}><SelectValue placeholder="Selecionar procedimento" /></SelectTrigger>
                   <SelectContent>
                     {procedimentos.map(p => <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                {formErrors.procedimento && <p className="text-xs text-red-500">{formErrors.procedimento}</p>}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label>Data *</Label>
-                  <Input type="date" value={addProcForm.data} onChange={e => setAddProcForm(f => ({...f, data: e.target.value}))} />
+                  <Input type="date" value={addProcForm.data} onChange={e => { setAddProcForm(f => ({...f, data: e.target.value})); setFormErrors(er => ({...er, data: ""})) }} className={formErrors.data ? "border-red-500" : ""} />
+                  {formErrors.data && <p className="text-xs text-red-500">{formErrors.data}</p>}
                 </div>
                 <div className="grid gap-2">
                   <Label>Horário *</Label>
-                  <Input type="time" value={addProcForm.hora} onChange={e => setAddProcForm(f => ({...f, hora: e.target.value}))} />
+                  <Input type="time" value={addProcForm.hora} onChange={e => { setAddProcForm(f => ({...f, hora: e.target.value})); setFormErrors(er => ({...er, hora: ""})) }} className={formErrors.hora ? "border-red-500" : ""} />
+                  {formErrors.hora && <p className="text-xs text-red-500">{formErrors.hora}</p>}
                 </div>
               </div>
               <div className="grid gap-2">
@@ -395,7 +412,7 @@ export default function ProntuariosPage() {
             </div>
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsAddProcOpen(false)}>Cancelar</Button>
-              <Button disabled={saving || !addProcForm.data || !addProcForm.hora} className="bg-[#00C9A7] text-[#0A2540]" onClick={adicionarProcedimento}>
+              <Button disabled={saving} className="bg-[#00C9A7] text-[#0A2540]" onClick={adicionarProcedimento}>
                 {saving ? "Salvando..." : "Registrar procedimento"}
               </Button>
             </div>
