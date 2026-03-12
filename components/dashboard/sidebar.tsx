@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/client"
-import { Home, Calendar, Users, FileHeart, MessageCircle, DollarSign, Settings, ChevronLeft, LogOut, HelpCircle } from "lucide-react"
+import { Home, Calendar, Users, FileHeart, MessageCircle, DollarSign, Settings, ChevronLeft, LogOut, HelpCircle, Menu, X } from "lucide-react"
 
 const navigation = [
   { name: "Início",       href: "/dashboard",               icon: Home },
@@ -27,6 +27,7 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const [profile, setProfile] = useState<{ nome: string; tenants?: { nome_clinica: string } } | null>(null)
   const supabase = createClient()
 
@@ -39,6 +40,9 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
     }
     loadProfile()
   }, [])
+
+  // Fecha o menu mobile ao mudar de rota
+  useEffect(() => { setMobileOpen(false) }, [pathname])
 
   function toggleCollapse() {
     const next = !collapsed
@@ -56,8 +60,8 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
     ? profile.nome.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()
     : "?"
 
-  return (
-    <aside className={cn("fixed left-0 top-0 z-40 flex h-screen flex-col bg-[#0A2540] transition-all duration-300", collapsed ? "w-20" : "w-64")}>
+  const NavContent = ({ mobile = false }: { mobile?: boolean }) => (
+    <>
       {/* Logo */}
       <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
         <Link href="/dashboard" className="flex items-center gap-2">
@@ -66,12 +70,19 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
               <path d="M12 2C8 2 6 6 6 10c0 3 1 5 2 7s2 5 4 5 3-3 4-5 2-4 2-7c0-4-2-8-6-8z" />
             </svg>
           </div>
-          {!collapsed && <span className="font-display text-lg font-bold text-white">DentistOS</span>}
+          {(!collapsed || mobile) && <span className="font-display text-lg font-bold text-white">DentistOS</span>}
         </Link>
-        <Button variant="ghost" size="icon" onClick={toggleCollapse}
-          className="text-white/60 hover:bg-white/10 hover:text-white">
-          <ChevronLeft className={cn("h-5 w-5 transition-transform", collapsed && "rotate-180")} />
-        </Button>
+        {mobile ? (
+          <Button variant="ghost" size="icon" onClick={() => setMobileOpen(false)}
+            className="text-white/60 hover:bg-white/10 hover:text-white">
+            <X className="h-5 w-5" />
+          </Button>
+        ) : (
+          <Button variant="ghost" size="icon" onClick={toggleCollapse}
+            className="text-white/60 hover:bg-white/10 hover:text-white">
+            <ChevronLeft className={cn("h-5 w-5 transition-transform", collapsed && "rotate-180")} />
+          </Button>
+        )}
       </div>
 
       {/* Nav */}
@@ -82,9 +93,9 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
             <Link key={item.name} href={item.href}
               className={cn("flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 isActive ? "bg-[#00C9A7] text-[#0A2540]" : "text-white/70 hover:bg-white/10 hover:text-white",
-                collapsed && "justify-center px-2")}>
+                !mobile && collapsed && "justify-center px-2")}>
               <item.icon className="h-5 w-5 shrink-0" />
-              {!collapsed && <span>{item.name}</span>}
+              {(!collapsed || mobile) && <span>{item.name}</span>}
             </Link>
           )
         })}
@@ -98,9 +109,9 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
             <Link key={item.name} href={item.href}
               className={cn("flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 isActive ? "bg-white/10 text-white" : "text-white/50 hover:bg-white/5 hover:text-white/70",
-                collapsed && "justify-center px-2")}>
+                !mobile && collapsed && "justify-center px-2")}>
               <item.icon className="h-5 w-5 shrink-0" />
-              {!collapsed && <span>{item.name}</span>}
+              {(!collapsed || mobile) && <span>{item.name}</span>}
             </Link>
           )
         })}
@@ -108,17 +119,17 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
 
       {/* User */}
       <div className="border-t border-white/10 p-3">
-        <div className={cn("flex items-center gap-3 rounded-lg p-2", collapsed && "justify-center")}>
+        <div className={cn("flex items-center gap-3 rounded-lg p-2", !mobile && collapsed && "justify-center")}>
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00C9A7]/20 font-semibold text-[#00C9A7]">
             {initials}
           </div>
-          {!collapsed && (
+          {(!collapsed || mobile) && (
             <div className="flex-1 overflow-hidden">
               <div className="truncate text-sm font-medium text-white">{profile?.nome || "..."}</div>
               <div className="truncate text-xs text-white/50">{(profile as any)?.tenants?.nome_clinica || "..."}</div>
             </div>
           )}
-          {!collapsed && (
+          {(!collapsed || mobile) && (
             <Button variant="ghost" size="icon" onClick={handleLogout}
               className="shrink-0 text-white/50 hover:bg-white/10 hover:text-white" title="Sair">
               <LogOut className="h-4 w-4" />
@@ -126,6 +137,43 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
           )}
         </div>
       </div>
-    </aside>
+    </>
+  )
+
+  return (
+    <>
+      {/* Botão hamburger mobile (fixo no topo) */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-lg bg-[#0A2540] text-white shadow-lg lg:hidden"
+        aria-label="Abrir menu"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
+
+      {/* Overlay mobile */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Drawer mobile */}
+      <aside className={cn(
+        "fixed left-0 top-0 z-50 flex h-screen w-72 flex-col bg-[#0A2540] transition-transform duration-300 lg:hidden",
+        mobileOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        <NavContent mobile />
+      </aside>
+
+      {/* Sidebar desktop */}
+      <aside className={cn(
+        "fixed left-0 top-0 z-40 hidden h-screen flex-col bg-[#0A2540] transition-all duration-300 lg:flex",
+        collapsed ? "w-20" : "w-64"
+      )}>
+        <NavContent />
+      </aside>
+    </>
   )
 }

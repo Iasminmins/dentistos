@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar onCollapsedChange={handleCollapse} />
-      <main className={cn("min-h-screen transition-all duration-300", collapsed ? "lg:pl-20" : "lg:pl-64")}>
+      <main className={cn("min-h-screen transition-all duration-300 pt-16 lg:pt-0", collapsed ? "lg:pl-20" : "lg:pl-64")}>
         {children}
       </main>
     </div>
