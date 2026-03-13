@@ -445,7 +445,7 @@ export default function ConfiguracoesPage() {
                 </div>
 
                 <div className="rounded-lg border bg-muted/50 p-4 text-sm text-muted-foreground">
-                  <p>💳 <strong>Pagamento seguro</strong> via Mercado Pago. Após assinar, você pode gerenciar ou cancelar sua assinatura a qualquer momento pelo portal do cliente.</p>
+                  <p>💳 <strong>Pagamento seguro</strong> via Stripe. Após assinar, você pode gerenciar ou cancelar sua assinatura a qualquer momento pelo portal do cliente.</p>
                 </div>
               </CardContent>
             </Card>
