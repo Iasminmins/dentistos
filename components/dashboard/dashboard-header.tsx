@@ -24,7 +24,7 @@ export function DashboardHeader({ title, subtitle, onMenuClick, onNovaConsulta }
   const [unread, setUnread] = useState(0)
   const notifRef = useRef<HTMLDivElement>(null)
 
-  const today = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
+  const today = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).replace(/\b([A-Z])/g, m => m.toLowerCase())
 
   useEffect(() => { loadNotifs() }, [])
 
