@@ -22,7 +22,7 @@ export default function CadastroPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
-  const [form, setForm] = useState({ nome: "", clínica: "", email: "", telefone: "", password: "" })
+  const [form, setForm] = useState({ nome: "", clinica: "", email: "", telefone: "", password: "" })
   const router = useRouter()
   const supabase = createClient()
 
@@ -56,7 +56,7 @@ export default function CadastroPage() {
         body: JSON.stringify({
           email: form.email,
           userId: data.user?.id,
-          clínica: form.clínica,
+          clinica: form.clínica,
         }),
       })
       const { url, error: stripeError } = await res.json()

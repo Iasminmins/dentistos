@@ -37,8 +37,8 @@ export default function ConfiguraçõesPage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const [clínica, setClínica] = useState({ nome_clínica: "", slug: "", endereço: "", cidade: "", estado: "", cep: "", meta_mensal: "" })
-  const [perfil, setPerfil] = useState({ nome: "", email: "", telefone: "", cro: "", especialidade: "clínico" })
+  const [clinica, setClinica] = useState({ nome_clinica: "", slug: "", endereco: "", cidade: "", estado: "", cep: "", meta_mensal: "" })
+  const [perfil, setPerfil] = useState({ nome: "", email: "", telefone: "", cro: "", especialidade: "clinico" })
   const [senha, setSenha] = useState({ nova: "", confirmar: "" })
   const [msgSenha, setMsgSenha] = useState("")
   const [cepLoading, setCepLoading] = useState(false)
@@ -57,7 +57,7 @@ export default function ConfiguraçõesPage() {
       email: profile.email || user.email || "",
       telefone: profile.telefone || "",
       cro: profile.cro || "",
-      especialidade: profile.especialidade || "clínico"
+      especialidade: profile.especialidade || "clinico"
     })
     if (profile.avatar_url) setAvatarUrl(profile.avatar_url)
     const t = (profile as any).tenants
@@ -68,13 +68,13 @@ export default function ConfiguraçõesPage() {
         const diff = Math.ceil(14 - (Date.now() - created.getTime()) / (1000*60*60*24))
         setTrialDaysLeft(Math.max(0, diff))
       }
-      setClínica(prev => ({ ...prev, nome_clínica: t.nome_clínica || "", slug: t.slug || "" }))
+      setClinica(prev => ({ ...prev, nome_clinica: t.nome_clinica || "", slug: t.slug || "" }))
     }
     const { data: config } = await supabase.from("configurações_clínica").select("*").eq("tenant_id", profile.tenant_id).single()
     if (config) {
-      setClínica(prev => ({
+      setClinica(prev => ({
         ...prev,
-        endereço: config.endereço || "",
+        endereco: config.endereço || "",
         cidade: config.cidade || "",
         estado: config.estado || "",
         cep: config.cep || "",
@@ -93,11 +93,11 @@ export default function ConfiguraçõesPage() {
       const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`)
       const data = await res.json()
       if (!data.erro) {
-        setClínica(prev => ({
+        setClinica(prev => ({
           ...prev,
           cidade: data.localidade || prev.cidade,
           estado: data.uf || prev.estado,
-          endereço: prev.endereço || (data.logradouro ? `${data.logradouro}, ${data.bairro}` : prev.endereço)
+          endereco: prev.endereço || (data.logradouro ? `${data.logradouro}, ${data.bairro}` : prev.endereço)
         }))
       }
     } catch {}
@@ -109,17 +109,17 @@ export default function ConfiguraçõesPage() {
   // FIX #1: Validação obrigatória antes de salvar
   async function saveClínica() {
     const newErrors: Record<string, string> = {}
-    if (!clínica.nome_clínica.trim()) newErrors.nome_clínica = "Nome da clínica é obrigatório"
-    if (!clínica.slug.trim()) newErrors.slug = "O slug é obrigatório"
+    if (!clinica.nome_clinica.trim()) newErrors.nome_clinica = "Nome da clínica é obrigatório"
+    if (!clinica.slug.trim()) newErrors.slug = "O slug é obrigatório"
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return }
     setErrors({})
     if (!tenantId) return
     setSaving("clínica")
-    await supabase.from("tenants").update({ nome_clínica: clínica.nome_clínica, slug: clínica.slug }).eq("id", tenantId)
+    await supabase.from("tenants").update({ nome_clinica: clinica.nome_clinica, slug: clinica.slug }).eq("id", tenantId)
     await supabase.from("configurações_clínica").update({
-      endereço: clínica.endereço, cidade: clínica.cidade,
-      estado: clínica.estado, cep: clínica.cep,
-      meta_mensal: clínica.meta_mensal ? parseFloat(clínica.meta_mensal) : null
+      endereco: clinica.endereco, cidade: clinica.cidade,
+      estado: clinica.estado, cep: clinica.cep,
+      meta_mensal: clinica.meta_mensal ? parseFloat(clinica.meta_mensal) : null
     }).eq("tenant_id", tenantId)
     setSaving(null); showSaved("clínica")
   }
@@ -203,22 +203,22 @@ export default function ConfiguraçõesPage() {
                   <div className="space-y-2">
                     <Label>Nome da clínica *</Label>
                     <Input
-                      value={clínica.nome_clínica}
+                      value={clinica.nome_clinica}
                       onChange={e => {
                         const nome = e.target.value
                         // FIX #2: slug auto-sincroniza com o nome
-                        setClínica({ ...clínica, nome_clínica: nome, slug: toSlug(nome) })
-                        if (errors.nome_clínica) setErrors(prev => ({ ...prev, nome_clínica: "" }))
+                        setClinica({ ...clinica, nome_clinica: nome, slug: toSlug(nome) })
+                        if (errors.nome_clinica) setErrors(prev => ({ ...prev, nome_clinica: "" }))
                       }}
-                      className={errors.nome_clínica ? "border-red-500" : ""}
+                      className={errors.nome_clinica ? "border-red-500" : ""}
                     />
-                    {errors.nome_clínica && <p className="text-xs text-red-500 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{errors.nome_clínica}</p>}
+                    {errors.nome_clinica && <p className="text-xs text-red-500 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{errors.nome_clinica}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label>Slug (link de agendamento)</Label>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">dentistos.com.br/agendar/</span>
-                      <Input value={clínica.slug} onChange={e => setClínica({...clínica, slug: e.target.value})} />
+                      <Input value={clinica.slug} onChange={e => setClinica({...clínica, slug: e.target.value})} />
                     </div>
                     <p className="text-xs text-muted-foreground">Atualiza automaticamente com o nome da clínica</p>
                   </div>
@@ -227,7 +227,7 @@ export default function ConfiguraçõesPage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Endereço</Label>
-                    <Input placeholder="Rua, número, bairro" value={clínica.endereço} onChange={e => setClínica({...clínica, endereço: e.target.value})} />
+                    <Input placeholder="Rua, número, bairro" value={clinica.endereco} onChange={e => setClinica({...clínica, endereco: e.target.value})} />
                   </div>
                   {/* FIX #5: CEP com busca automática */}
                   <div className="space-y-2">
@@ -235,11 +235,11 @@ export default function ConfiguraçõesPage() {
                     <div className="relative">
                       <Input
                         placeholder="00000-000"
-                        value={clínica.cep}
+                        value={clinica.cep}
                         onChange={e => {
                           const val = e.target.value.replace(/\D/g, "").slice(0,8)
                           const formatted = val.length > 5 ? `${val.slice(0,5)}-${val.slice(5)}` : val
-                          setClínica({...clínica, cep: formatted})
+                          setClinica({...clínica, cep: formatted})
                           if (val.length === 8) buscarCep(val)
                         }}
                       />
@@ -253,16 +253,16 @@ export default function ConfiguraçõesPage() {
                   {/* FIX #6: placeholder enganoso removido, mostra valor real */}
                   <div className="space-y-2">
                     <Label>Cidade</Label>
-                    <Input placeholder="Preenchido pelo CEP" value={clínica.cidade} onChange={e => setClínica({...clínica, cidade: e.target.value})} />
+                    <Input placeholder="Preenchido pelo CEP" value={clinica.cidade} onChange={e => setClinica({...clínica, cidade: e.target.value})} />
                   </div>
                   <div className="space-y-2">
                     <Label>Estado</Label>
-                    <Input placeholder="UF" maxLength={2} value={clínica.estado} onChange={e => setClínica({...clínica, estado: e.target.value.toUpperCase()})} />
+                    <Input placeholder="UF" maxLength={2} value={clinica.estado} onChange={e => setClinica({...clínica, estado: e.target.value.toUpperCase()})} />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label>Meta mensal (R$)</Label>
-                  <Input type="number" placeholder="Ex: 30000" value={clínica.meta_mensal} onChange={e => setClínica({...clínica, meta_mensal: e.target.value})} className="max-w-xs" />
+                  <Input type="number" placeholder="Ex: 30000" value={clinica.meta_mensal} onChange={e => setClinica({...clínica, meta_mensal: e.target.value})} className="max-w-xs" />
                   <p className="text-xs text-muted-foreground">Aparece na barra de progresso do módulo Financeiro</p>
                 </div>
                 <SaveButton id="clínica" />
@@ -326,7 +326,7 @@ export default function ConfiguraçõesPage() {
                     <Select value={perfil.especialidade} onValueChange={v => setPerfil({...perfil, especialidade: v})}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="clínico">Clínico Geral</SelectItem>
+                        <SelectItem value="clinico">Clínico Geral</SelectItem>
                         <SelectItem value="ortodontia">Ortodontia</SelectItem>
                         <SelectItem value="implante">Implantodontia</SelectItem>
                         <SelectItem value="endo">Endodontia</SelectItem>

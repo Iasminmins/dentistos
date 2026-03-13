@@ -28,7 +28,7 @@ type Paciente = { id: string; nome: string; telefone: string; email?: string; da
 type Dente = { id: string; número_dente: number; status: string; observacoes?: string }
 type Consulta = { id: string; data_hora: string; status: string; valor?: number; observacoes?: string; procedimentos_tipos?: { nome: string } }
 
-export default function ProntuáriosPage() {
+export default function ProntuariosPage() {
   const supabase = createClient()
   const [tenantId, setTenantId] = useState<string | null>(null)
   const [dentistId, setDentistId] = useState<string | null>(null)
@@ -159,7 +159,7 @@ export default function ProntuáriosPage() {
   }
 
   // ✅ FUNÇÃO DE IMPRESSÃO — abre janela com template profissional
-  function imprimirProntuário() {
+  function imprimirProntuario() {
     if (!pacienteSelecionado) return
     const allTeeth = [...upperTeeth, ...lowerTeeth]
     const dentesHTML = allTeeth.map(num => {
@@ -314,7 +314,7 @@ ${consultasHTML ? `<div class="section"><div class="section-title">Histórico de
                       <div className="font-medium">{pacienteSelecionado.nome}</div>
                       <div className="text-sm text-muted-foreground">{pacienteSelecionado.telefone}</div>
                     </div>
-                    <Button variant="outline" size="sm" className="gap-2 ml-2" onClick={imprimirProntuário}>
+                    <Button variant="outline" size="sm" className="gap-2 ml-2" onClick={imprimirProntuario}>
                       <Printer className="h-4 w-4" /><span className="hidden sm:inline">Imprimir</span>
                     </Button>
                   </>
