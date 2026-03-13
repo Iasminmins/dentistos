@@ -70,11 +70,11 @@ export default function ConfiguraçõesPage() {
       }
       setClinica(prev => ({ ...prev, nome_clinica: t.nome_clinica || "", slug: t.slug || "" }))
     }
-    const { data: config } = await supabase.from("configurações_clínica").select("*").eq("tenant_id", profile.tenant_id).single()
+    const { data: config } = await supabase.from("configuracoes_clinica").select("*").eq("tenant_id", profile.tenant_id).single()
     if (config) {
       setClinica(prev => ({
         ...prev,
-        endereco: config.endereço || "",
+        endereco: config.endereco || "",
         cidade: config.cidade || "",
         estado: config.estado || "",
         cep: config.cep || "",
@@ -97,7 +97,7 @@ export default function ConfiguraçõesPage() {
           ...prev,
           cidade: data.localidade || prev.cidade,
           estado: data.uf || prev.estado,
-          endereco: prev.endereço || (data.logradouro ? `${data.logradouro}, ${data.bairro}` : prev.endereço)
+          endereco: prev.endereco || (data.logradouro ? `${data.logradouro}, ${data.bairro}` : prev.endereco)
         }))
       }
     } catch {}
@@ -116,7 +116,7 @@ export default function ConfiguraçõesPage() {
     if (!tenantId) return
     setSaving("clínica")
     await supabase.from("tenants").update({ nome_clinica: clinica.nome_clinica, slug: clinica.slug }).eq("id", tenantId)
-    await supabase.from("configurações_clínica").update({
+    await supabase.from("configuracoes_clinica").update({
       endereco: clinica.endereco, cidade: clinica.cidade,
       estado: clinica.estado, cep: clinica.cep,
       meta_mensal: clinica.meta_mensal ? parseFloat(clinica.meta_mensal) : null

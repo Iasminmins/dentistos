@@ -56,7 +56,7 @@ export default function WhatsAppPage() {
     const { data: profile } = await supabase.from("profiles").select("tenant_id").eq("id", user.id).single()
     if (!profile) return
     setTenantId(profile.tenant_id)
-    const { data: cfg } = await supabase.from("configurações_clínica").select("*").eq("tenant_id", profile.tenant_id).single()
+    const { data: cfg } = await supabase.from("configuracoes_clinica").select("*").eq("tenant_id", profile.tenant_id).single()
     if (cfg) {
       setConfig(cfg)
       setToken(cfg.whatsapp_token || "")
@@ -81,7 +81,7 @@ export default function WhatsAppPage() {
   async function saveConfig() {
     if (!tenantId) return
     setSaving(true)
-    await supabase.from("configurações_clínica").update({
+    await supabase.from("configuracoes_clinica").update({
       whatsapp_token: token, whatsapp_número: número,
       whatsapp_confirmacao_48h: autoConfirmacao, whatsapp_lembrete_2h: autoLembrete,
       whatsapp_reativação: autoReativação, whatsapp_aniversario: autoAniversario,

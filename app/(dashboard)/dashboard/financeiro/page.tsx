@@ -45,7 +45,7 @@ export default function FinanceiroPage() {
     const { data: profile } = await supabase.from("profiles").select("tenant_id").eq("id", user.id).single()
     if (!profile) return
     setTenantId(profile.tenant_id)
-    const { data: config } = await supabase.from("configurações_clínica").select("meta_mensal").eq("tenant_id", profile.tenant_id).single()
+    const { data: config } = await supabase.from("configuracoes_clinica").select("meta_mensal").eq("tenant_id", profile.tenant_id).single()
     if (config?.meta_mensal) setMetaMensal(Number(config.meta_mensal))
     const { data: pacs } = await supabase.from("pacientes").select("id, nome").eq("tenant_id", profile.tenant_id).order("nome")
     if (pacs) setPacientes(pacs)

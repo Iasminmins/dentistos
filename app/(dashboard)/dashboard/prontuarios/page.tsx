@@ -74,7 +74,7 @@ export default function ProntuariosPage() {
     setLoadingPaciente(true)
     const { data: dentesData } = await supabase.from("dentes").select("*").eq("paciente_id", p.id)
     const map: Record<number, Dente> = {}
-    if (dentesData) dentesData.forEach(d => { map[d.número_dente] = d })
+    if (dentesData) dentesData.forEach(d => { map[d.numero_dente] = d })
     setDentes(map)
     const { data: consultasData } = await supabase.from("consultas")
       .select("id,data_hora,status,valor,observacoes,procedimentos_tipos(nome)")

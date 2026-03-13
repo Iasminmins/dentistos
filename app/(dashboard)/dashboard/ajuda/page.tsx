@@ -15,7 +15,7 @@ const articles: Record<string, { title: string; steps: string[] }> = {
     title: "Como configurar minha clínica",
     steps: [
       "Acesse o menu lateral e clique em Configurações.",
-      "Na aba Clínica, preencha o nome, endereço, cidade, estado e CEP.",
+      "Na aba Clínica, preencha o nome, endereco, cidade, estado e CEP.",
       "Defina uma meta mensal de receita para acompanhar no Financeiro.",
       "Clique em Salvar alterações — você verá a confirmação ✅ Salvo!",
     ],
