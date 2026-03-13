@@ -282,7 +282,7 @@ export default function PacientesPage() {
         {/* Dialog Confirmar Exclusao */}
         <Dialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
           <DialogContent className="sm:max-w-sm">
-            <DialogHeader><DialogTitle>Confirmar exclusao</DialogTitle><DialogDescription>Esta acao nao pode ser desfeita.</DialogDescription></DialogHeader>
+            <DialogHeader><DialogTitle>Confirmar exclusao</DialogTitle><DialogDescription>Esta acao não pode ser desfeita.</DialogDescription></DialogHeader>
             <p className="text-sm text-muted-foreground py-4">
               Tem certeza que deseja excluir este paciente? Esta ação não pode ser desfeita.
             </p>

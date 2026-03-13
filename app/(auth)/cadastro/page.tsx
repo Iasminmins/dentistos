@@ -14,7 +14,7 @@ import { createClient } from "@/lib/supabase/client"
 const benefits = [
   "14 dias gratis para testar",
   "Agenda inteligente",
-  "WhatsApp automatico",
+  "WhatsApp automático",
   "Suporte em portugues",
 ]
 
@@ -22,7 +22,7 @@ export default function CadastroPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
-  const [form, setForm] = useState({ nome: "", clinica: "", email: "", telefone: "", password: "" })
+  const [form, setForm] = useState({ nome: "", clínica: "", email: "", telefone: "", password: "" })
   const router = useRouter()
   const supabase = createClient()
 
@@ -42,7 +42,7 @@ export default function CadastroPage() {
         options: {
           data: {
             full_name: form.nome,
-            clinic_name: form.clinica,
+            clinic_name: form.clínica,
             phone: form.telefone,
           },
         },
@@ -56,7 +56,7 @@ export default function CadastroPage() {
         body: JSON.stringify({
           email: form.email,
           userId: data.user?.id,
-          clinica: form.clinica,
+          clínica: form.clínica,
         }),
       })
       const { url, error: stripeError } = await res.json()
@@ -110,7 +110,7 @@ export default function CadastroPage() {
         <div className="max-w-lg">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
             className="font-display text-4xl font-bold leading-tight text-white">
-            Comece a transformar sua clinica hoje
+            Comece a transformar sua clínica hoje
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
             className="mt-4 text-lg text-white/60">
@@ -186,10 +186,10 @@ export default function CadastroPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="clinica">Nome da clinica</Label>
+              <Label htmlFor="clínica">Nome da clínica</Label>
               <div className="relative">
                 <Building2 className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                <Input id="clinica" type="text" placeholder="Clinica Sorriso Perfeito" className="pl-10" required value={form.clinica} onChange={handleChange} />
+                <Input id="clínica" type="text" placeholder="Clínica Sorriso Perfeito" className="pl-10" required value={form.clínica} onChange={handleChange} />
               </div>
             </div>
             <div className="space-y-2">
@@ -210,7 +210,7 @@ export default function CadastroPage() {
               <Label htmlFor="password">Senha</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                <Input id="password" type="password" placeholder="Minimo 8 caracteres" className="pl-10" required minLength={8} value={form.password} onChange={handleChange} />
+                <Input id="password" type="password" placeholder="Mínimo 8 caracteres" className="pl-10" required minLength={8} value={form.password} onChange={handleChange} />
               </div>
             </div>
             <div className="flex items-start gap-2">

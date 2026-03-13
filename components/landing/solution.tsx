@@ -116,7 +116,7 @@ export function Solution() {
             Tudo isso funcionando enquanto você atende seus pacientes.
           </p>
           <p className="mt-2 font-display text-xl font-semibold text-[#0A2540]">
-            Zero trabalho manual. Maximo resultado.
+            Zero trabalho manual. Máximo resultado.
           </p>
         </motion.div>
       </div>

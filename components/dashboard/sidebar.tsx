@@ -12,12 +12,12 @@ const navigation = [
   { name: "Início",       href: "/dashboard",               icon: Home },
   { name: "Agenda",       href: "/dashboard/agenda",         icon: Calendar },
   { name: "Pacientes",    href: "/dashboard/pacientes",      icon: Users },
-  { name: "Prontuários",  href: "/dashboard/prontuarios",    icon: FileHeart },
+  { name: "Prontuários",  href: "/dashboard/prontuários",    icon: FileHeart },
   { name: "WhatsApp",     href: "/dashboard/whatsapp",       icon: MessageCircle },
   { name: "Financeiro",   href: "/dashboard/financeiro",     icon: DollarSign },
 ]
 const secondaryNavigation = [
-  { name: "Configurações", href: "/dashboard/configuracoes", icon: Settings },
+  { name: "Configurações", href: "/dashboard/configurações", icon: Settings },
   { name: "Ajuda",          href: "/dashboard/ajuda",         icon: HelpCircle },
 ]
 
@@ -28,14 +28,14 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [profile, setProfile] = useState<{ nome: string; tenants?: { nome_clinica: string } } | null>(null)
+  const [profile, setProfile] = useState<{ nome: string; tenants?: { nome_clínica: string } } | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
     async function loadProfile() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      const { data } = await supabase.from("profiles").select("nome, tenants(nome_clinica)").eq("id", user.id).single()
+      const { data } = await supabase.from("profiles").select("nome, tenants(nome_clínica)").eq("id", user.id).single()
       if (data) setProfile(data as any)
     }
     loadProfile()
@@ -126,7 +126,7 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
           {(!collapsed || mobile) && (
             <div className="flex-1 overflow-hidden">
               <div className="truncate text-sm font-medium text-white">{profile?.nome || "..."}</div>
-              <div className="truncate text-xs text-white/50">{(profile as any)?.tenants?.nome_clinica || "..."}</div>
+              <div className="truncate text-xs text-white/50">{(profile as any)?.tenants?.nome_clínica || "..."}</div>
             </div>
           )}
           {(!collapsed || mobile) && (

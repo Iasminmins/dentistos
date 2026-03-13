@@ -25,7 +25,7 @@ const testimonials = [
   },
   {
     name: "Dra. Ana Paula",
-    role: "Clinica Geral",
+    role: "Clínica Geral",
     location: "Curitiba, PR",
     cro: "CRO-PR 23.897",
     avatar: "AP",

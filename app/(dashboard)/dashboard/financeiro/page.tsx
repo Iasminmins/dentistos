@@ -45,7 +45,7 @@ export default function FinanceiroPage() {
     const { data: profile } = await supabase.from("profiles").select("tenant_id").eq("id", user.id).single()
     if (!profile) return
     setTenantId(profile.tenant_id)
-    const { data: config } = await supabase.from("configuracoes_clinica").select("meta_mensal").eq("tenant_id", profile.tenant_id).single()
+    const { data: config } = await supabase.from("configurações_clínica").select("meta_mensal").eq("tenant_id", profile.tenant_id).single()
     if (config?.meta_mensal) setMetaMensal(Number(config.meta_mensal))
     const { data: pacs } = await supabase.from("pacientes").select("id, nome").eq("tenant_id", profile.tenant_id).order("nome")
     if (pacs) setPacientes(pacs)
@@ -107,7 +107,7 @@ export default function FinanceiroPage() {
     { label: "Receita do mes", value: `R$ ${receitaMes.toLocaleString("pt-BR", {minimumFractionDigits: 2})}`, change: `${receitas.length} lancamentos`, trend: "up", icon: TrendingUp, color: "bg-emerald-500" },
     { label: "Caixa hoje", value: `R$ ${caixaHoje.toLocaleString("pt-BR", {minimumFractionDigits: 2})}`, change: "recebido hoje", trend: "neutral", icon: DollarSign, color: "bg-blue-500" },
     { label: "A receber", value: `R$ ${aReceber.toLocaleString("pt-BR", {minimumFractionDigits: 2})}`, change: `${lancamentos.filter(l=>l.status!=="pago").length} pendentes`, trend: "neutral", icon: Clock, color: "bg-amber-500" },
-    { label: "Meta mensal", value: metaMensal > 0 ? `${percentMeta}%` : "Sem meta", change: metaMensal > 0 ? `R$ ${metaMensal.toLocaleString("pt-BR")}` : "Configure em Configuracoes", trend: percentMeta >= 100 ? "up" : "neutral", icon: Target, color: "bg-purple-500" },
+    { label: "Meta mensal", value: metaMensal > 0 ? `${percentMeta}%` : "Sem meta", change: metaMensal > 0 ? `R$ ${metaMensal.toLocaleString("pt-BR")}` : "Configure em Configurações", trend: percentMeta >= 100 ? "up" : "neutral", icon: Target, color: "bg-purple-500" },
   ]
 
   return (

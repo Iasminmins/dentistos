@@ -11,7 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Search, Book, MessageCircle, Video, Mail, Phone, HelpCircle, Calendar, DollarSign, FileHeart, ChevronRight } from "lucide-react"
 
 const articles: Record<string, { title: string; steps: string[] }> = {
-  "Como configurar minha clinica": {
+  "Como configurar minha clínica": {
     title: "Como configurar minha clínica",
     steps: [
       "Acesse o menu lateral e clique em Configurações.",
@@ -58,7 +58,7 @@ const articles: Record<string, { title: string; steps: string[] }> = {
       "Status disponíveis: Agendada, Confirmada, Concluída e Faltou.",
     ],
   },
-  "Configurando lembretes automaticos": {
+  "Configurando lembretes automáticos": {
     title: "Configurando lembretes automáticos",
     steps: [
       "Acesse a página WhatsApp no menu lateral.",
@@ -113,7 +113,7 @@ const articles: Record<string, { title: string; steps: string[] }> = {
       "Clique em Registrar procedimento — aparece no histórico imediatamente.",
     ],
   },
-  "Historico de atendimentos": {
+  "Histórico de atendimentos": {
     title: "Histórico de atendimentos",
     steps: [
       "Acesse Prontuários e busque o paciente.",
@@ -161,9 +161,9 @@ const articles: Record<string, { title: string; steps: string[] }> = {
 }
 
 const categories = [
-  { title: "Primeiros Passos", icon: Book, articles: ["Como configurar minha clinica","Adicionando sua primeira consulta","Cadastrando pacientes","Configurando horarios de atendimento"] },
-  { title: "Agenda", icon: Calendar, articles: ["Gerenciando agendamentos","Configurando lembretes automaticos","Bloqueando horarios","Reagendando consultas"] },
-  { title: "Pacientes & Prontuarios", icon: FileHeart, articles: ["Cadastro completo de pacientes","Preenchendo o odontograma","Adicionando procedimentos","Historico de atendimentos"] },
+  { title: "Primeiros Passos", icon: Book, articles: ["Como configurar minha clínica","Adicionando sua primeira consulta","Cadastrando pacientes","Configurando horarios de atendimento"] },
+  { title: "Agenda", icon: Calendar, articles: ["Gerenciando agendamentos","Configurando lembretes automáticos","Bloqueando horarios","Reagendando consultas"] },
+  { title: "Pacientes & Prontuários", icon: FileHeart, articles: ["Cadastro completo de pacientes","Preenchendo o odontograma","Adicionando procedimentos","Histórico de atendimentos"] },
   { title: "Financeiro", icon: DollarSign, articles: ["Registrando pagamentos","Configurando meta mensal","Controlando pendencias","Alternando status de pagamento"] },
 ]
 

@@ -25,10 +25,10 @@ const upperTeeth = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28]
 const lowerTeeth = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38]
 
 type Paciente = { id: string; nome: string; telefone: string; email?: string; data_nascimento?: string; convenio?: string }
-type Dente = { id: string; numero_dente: number; status: string; observacoes?: string }
+type Dente = { id: string; número_dente: number; status: string; observacoes?: string }
 type Consulta = { id: string; data_hora: string; status: string; valor?: number; observacoes?: string; procedimentos_tipos?: { nome: string } }
 
-export default function ProntuariosPage() {
+export default function ProntuáriosPage() {
   const supabase = createClient()
   const [tenantId, setTenantId] = useState<string | null>(null)
   const [dentistId, setDentistId] = useState<string | null>(null)
@@ -74,7 +74,7 @@ export default function ProntuariosPage() {
     setLoadingPaciente(true)
     const { data: dentesData } = await supabase.from("dentes").select("*").eq("paciente_id", p.id)
     const map: Record<number, Dente> = {}
-    if (dentesData) dentesData.forEach(d => { map[d.numero_dente] = d })
+    if (dentesData) dentesData.forEach(d => { map[d.número_dente] = d })
     setDentes(map)
     const { data: consultasData } = await supabase.from("consultas")
       .select("id,data_hora,status,valor,observacoes,procedimentos_tipos(nome)")
@@ -98,7 +98,7 @@ export default function ProntuariosPage() {
     setDentes(prev => ({
       ...prev,
       [denteSelecionado]: {
-        ...(prev[denteSelecionado] || { id: "", numero_dente: denteSelecionado }),
+        ...(prev[denteSelecionado] || { id: "", número_dente: denteSelecionado }),
         status: novoStatus,
         observacoes: obsObservacao,
       } as Dente
@@ -110,7 +110,7 @@ export default function ProntuariosPage() {
     } else {
       const { data: inserted } = await supabase.from("dentes").insert({
         tenant_id: tenantId, paciente_id: pacienteSelecionado.id,
-        numero_dente: denteSelecionado, status: novoStatus, observacoes: obsObservacao
+        número_dente: denteSelecionado, status: novoStatus, observacoes: obsObservacao
       }).select().single()
       // Atualiza com o ID real retornado pelo banco
       if (inserted) {
@@ -139,7 +139,7 @@ export default function ProntuariosPage() {
       data_hora: `${addProcForm.data}T${addProcForm.hora}:00.000-03:00`,
       duracao_minutos: 30,
       valor: addProcForm.valor ? parseFloat(addProcForm.valor) : (proc?.valor_padrao || null),
-      observacoes: addProcForm.observacoes || null, status: "concluida"
+      observacoes: addProcForm.observacoes || null, status: "concluída"
     })
     await selecionarPaciente(pacienteSelecionado)
     setIsAddProcOpen(false)
@@ -159,7 +159,7 @@ export default function ProntuariosPage() {
   }
 
   // ✅ FUNÇÃO DE IMPRESSÃO — abre janela com template profissional
-  function imprimirProntuario() {
+  function imprimirProntuário() {
     if (!pacienteSelecionado) return
     const allTeeth = [...upperTeeth, ...lowerTeeth]
     const dentesHTML = allTeeth.map(num => {
@@ -183,11 +183,11 @@ export default function ProntuariosPage() {
       const d = new Date(c.data_hora)
       const proc = (c.procedimentos_tipos as any)?.nome || "Consulta"
       const val = c.valor ? `R$ ${Number(c.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : "—"
-      const statusLabel = c.status === "concluida" ? "Concluída" : c.status === "faltou" ? "Faltou" : "Agendada"
+      const statusLabel = c.status === "concluída" ? "Concluída" : c.status === "faltou" ? "Faltou" : "Agendada"
       return `<tr><td>${d.toLocaleDateString("pt-BR")}</td><td>${proc}</td><td>${val}</td><td>${statusLabel}</td></tr>`
     }).join("")
 
-    const clinicaNome = "DentistOS"
+    const clínicaNome = "DentistOS"
     const dataImpressao = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })
     const idade = calcIdade(pacienteSelecionado.data_nascimento)
 
@@ -230,7 +230,7 @@ export default function ProntuariosPage() {
 <div class="header">
   <div class="logo">
     <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8 2 6 6 6 10c0 3 1 5 2 7s2 5 4 5 3-3 4-5 2-4 2-7c0-4-2-8-6-8z"/></svg></div>
-    <span class="logo-name">${clinicaNome}</span>
+    <span class="logo-name">${clínicaNome}</span>
   </div>
   <div class="header-right"><div class="title">Prontuário Odontológico</div><div>${dataImpressao}</div></div>
 </div>
@@ -314,7 +314,7 @@ ${consultasHTML ? `<div class="section"><div class="section-title">Histórico de
                       <div className="font-medium">{pacienteSelecionado.nome}</div>
                       <div className="text-sm text-muted-foreground">{pacienteSelecionado.telefone}</div>
                     </div>
-                    <Button variant="outline" size="sm" className="gap-2 ml-2" onClick={imprimirProntuario}>
+                    <Button variant="outline" size="sm" className="gap-2 ml-2" onClick={imprimirProntuário}>
                       <Printer className="h-4 w-4" /><span className="hidden sm:inline">Imprimir</span>
                     </Button>
                   </>
@@ -460,8 +460,8 @@ ${consultasHTML ? `<div class="section"><div class="section-title">Histórico de
                       </div>
                       <div className="text-right shrink-0 ml-4">
                         {c.valor && <div className="font-semibold text-[#00C9A7]">R$ {Number(c.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</div>}
-                        <Badge variant="outline" className={`mt-1 ${c.status === "concluida" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : c.status === "faltou" ? "border-red-200 bg-red-50 text-red-700" : "border-amber-200 bg-amber-50 text-amber-700"}`}>
-                          {c.status === "concluida" ? "Concluída" : c.status === "faltou" ? "Faltou" : c.status === "confirmada" ? "Confirmada" : "Agendada"}
+                        <Badge variant="outline" className={`mt-1 ${c.status === "concluída" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : c.status === "faltou" ? "border-red-200 bg-red-50 text-red-700" : "border-amber-200 bg-amber-50 text-amber-700"}`}>
+                          {c.status === "concluída" ? "Concluída" : c.status === "faltou" ? "Faltou" : c.status === "confirmada" ? "Confirmada" : "Agendada"}
                         </Badge>
                       </div>
                     </div>

@@ -159,8 +159,8 @@ function AgendaContent() {
 
   const weekDates = getWeekDates()
   const filteredPacientes = pacientes.filter(p => p.nome.toLowerCase().includes(searchPaciente.toLowerCase()))
-  const statusColor = (s: string) => s === "confirmada" ? "border-emerald-500" : s === "faltou" ? "border-red-500" : s === "concluida" ? "border-blue-500" : "border-amber-500"
-  const statusBg = (s: string) => s === "confirmada" ? "bg-emerald-50" : s === "faltou" ? "bg-red-50" : s === "concluida" ? "bg-blue-50" : "bg-amber-50"
+  const statusColor = (s: string) => s === "confirmada" ? "border-emerald-500" : s === "faltou" ? "border-red-500" : s === "concluída" ? "border-blue-500" : "border-amber-500"
+  const statusBg = (s: string) => s === "confirmada" ? "bg-emerald-50" : s === "faltou" ? "bg-red-50" : s === "concluída" ? "bg-blue-50" : "bg-amber-50"
   const { dia: diaAtual } = viewMode === "dia" ? getDayRange() : { dia: new Date() }
   const { mes: mesAtual } = viewMode === "mes" ? getMonthRange() : { mes: new Date() }
 
@@ -360,7 +360,7 @@ function AgendaContent() {
                 <div>
                   <Label className="mb-2 block">Alterar status</Label>
                   <div className="grid grid-cols-2 gap-2">
-                    {[["agendada","Agendada","bg-amber-500"],["confirmada","Confirmada","bg-emerald-500"],["concluida","Concluída","bg-blue-500"],["faltou","Faltou","bg-red-500"]].map(([val, label, color]) => (
+                    {[["agendada","Agendada","bg-amber-500"],["confirmada","Confirmada","bg-emerald-500"],["concluída","Concluída","bg-blue-500"],["faltou","Faltou","bg-red-500"]].map(([val, label, color]) => (
                       <button key={val} onClick={() => updateStatus(consultaSelecionada.id, val)}
                         className={`flex items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm font-medium transition-all hover:opacity-80 ${consultaSelecionada.status === val ? "border-current bg-muted" : "border-transparent bg-muted/40"}`}>
                         <div className={`h-2.5 w-2.5 rounded-full ${color}`} />{label}

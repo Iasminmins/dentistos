@@ -67,7 +67,7 @@ export function DashboardHeader({ title, subtitle, onMenuClick, onNovaConsulta }
         tipo: c.status === "agendada" ? "agendada" : "confirmada",
         texto: `${nome} — ${isHoje ? "hoje" : "amanhã"} às ${hora}`,
         hora: isHoje ? `Hoje ${hora}` : `Amanhã ${hora}`,
-        lida: c.status === "concluida" || c.status === "faltou",
+        lida: c.status === "concluída" || c.status === "faltou",
       }
     })
 

@@ -7,7 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, userId, clinica } = await req.json()
+    const { email, userId, clínica } = await req.json()
 
     if (!email || !userId) {
       return NextResponse.json({ error: "Dados inválidos" }, { status: 400 })
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     if (!customer) {
       customer = await stripe.customers.create({
         email,
-        name: clinica || email,
+        name: clínica || email,
         metadata: { supabase_user_id: userId },
       })
     }

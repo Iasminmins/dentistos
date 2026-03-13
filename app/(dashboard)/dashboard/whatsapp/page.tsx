@@ -15,12 +15,12 @@ import { MessageCircle, CheckCircle2, Clock, XCircle, Settings, Send, QrCode, Sm
 import { createClient } from "@/lib/supabase/client"
 
 type MsgWpp = { id: string; tipo: string; conteudo: string; status: string; created_at: string; pacientes?: { nome: string; telefone: string } }
-type Config = { whatsapp_token?: string; whatsapp_numero?: string; whatsapp_confirmacao_48h?: boolean; whatsapp_lembrete_2h?: boolean; whatsapp_reativacao?: boolean; whatsapp_aniversario?: boolean; whatsapp_template_confirmacao?: string; whatsapp_template_lembrete?: string; whatsapp_template_reativacao?: string }
+type Config = { whatsapp_token?: string; whatsapp_número?: string; whatsapp_confirmacao_48h?: boolean; whatsapp_lembrete_2h?: boolean; whatsapp_reativação?: boolean; whatsapp_aniversario?: boolean; whatsapp_template_confirmacao?: string; whatsapp_template_lembrete?: string; whatsapp_template_reativação?: string }
 
 const defaultTemplates = {
   confirmacao: "Ola {{nome}}, sua consulta esta marcada para {{data}} as {{hora}}. Confirme respondendo SIM ou NAO.",
   lembrete: "Ola {{nome}}, lembrando que sua consulta e hoje as {{hora}}. Estamos te esperando!",
-  reativacao: "Ola {{nome}}, faz tempo que nao te vemos! Que tal agendar uma consulta de rotina?"
+  reativação: "Ola {{nome}}, faz tempo que não te vemos! Que tal agendar uma consulta de rotina?"
 }
 
 export default function WhatsAppPage() {
@@ -32,13 +32,13 @@ export default function WhatsAppPage() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [token, setToken] = useState("")
-  const [numero, setNumero] = useState("")
+  const [número, setNúmero] = useState("")
   const [templateConfirmacao, setTemplateConfirmacao] = useState(defaultTemplates.confirmacao)
   const [templateLembrete, setTemplateLembrete] = useState(defaultTemplates.lembrete)
-  const [templateReativacao, setTemplateReativacao] = useState(defaultTemplates.reativacao)
+  const [templateReativação, setTemplateReativação] = useState(defaultTemplates.reativação)
   const [autoConfirmacao, setAutoConfirmacao] = useState(false)
   const [autoLembrete, setAutoLembrete] = useState(false)
-  const [autoReativacao, setAutoReativacao] = useState(false)
+  const [autoReativação, setAutoReativação] = useState(false)
   const [autoAniversario, setAutoAniversario] = useState(false)
   const [isConfigOpen, setIsConfigOpen] = useState(false)
   const [isNovoTemplateOpen, setIsNovoTemplateOpen] = useState(false)
@@ -46,7 +46,7 @@ export default function WhatsAppPage() {
   const [novoTemplateTexto, setNovoTemplateTexto] = useState("")
   const [customTemplates, setCustomTemplates] = useState<{label: string; texto: string}[]>([])
 
-  const isConectado = !!(config.whatsapp_token && config.whatsapp_numero)
+  const isConectado = !!(config.whatsapp_token && config.whatsapp_número)
 
   useEffect(() => { initialize() }, [])
 
@@ -56,17 +56,17 @@ export default function WhatsAppPage() {
     const { data: profile } = await supabase.from("profiles").select("tenant_id").eq("id", user.id).single()
     if (!profile) return
     setTenantId(profile.tenant_id)
-    const { data: cfg } = await supabase.from("configuracoes_clinica").select("*").eq("tenant_id", profile.tenant_id).single()
+    const { data: cfg } = await supabase.from("configurações_clínica").select("*").eq("tenant_id", profile.tenant_id).single()
     if (cfg) {
       setConfig(cfg)
       setToken(cfg.whatsapp_token || "")
-      setNumero(cfg.whatsapp_numero || "")
+      setNúmero(cfg.whatsapp_número || "")
       setTemplateConfirmacao(cfg.whatsapp_template_confirmacao || defaultTemplates.confirmacao)
       setTemplateLembrete(cfg.whatsapp_template_lembrete || defaultTemplates.lembrete)
-      setTemplateReativacao(cfg.whatsapp_template_reativacao || defaultTemplates.reativacao)
+      setTemplateReativação(cfg.whatsapp_template_reativação || defaultTemplates.reativação)
       setAutoConfirmacao(cfg.whatsapp_confirmacao_48h ?? false)
       setAutoLembrete(cfg.whatsapp_lembrete_2h ?? false)
-      setAutoReativacao(cfg.whatsapp_reativacao ?? false)
+      setAutoReativação(cfg.whatsapp_reativação ?? false)
       setAutoAniversario(cfg.whatsapp_aniversario ?? false)
     }
     const { data: msgs } = await supabase.from("mensagens_whatsapp")
@@ -81,13 +81,13 @@ export default function WhatsAppPage() {
   async function saveConfig() {
     if (!tenantId) return
     setSaving(true)
-    await supabase.from("configuracoes_clinica").update({
-      whatsapp_token: token, whatsapp_numero: numero,
+    await supabase.from("configurações_clínica").update({
+      whatsapp_token: token, whatsapp_número: número,
       whatsapp_confirmacao_48h: autoConfirmacao, whatsapp_lembrete_2h: autoLembrete,
-      whatsapp_reativacao: autoReativacao, whatsapp_aniversario: autoAniversario,
+      whatsapp_reativação: autoReativação, whatsapp_aniversario: autoAniversario,
       whatsapp_template_confirmacao: templateConfirmacao,
       whatsapp_template_lembrete: templateLembrete,
-      whatsapp_template_reativacao: templateReativacao,
+      whatsapp_template_reativação: templateReativação,
     }).eq("tenant_id", tenantId)
     setSaving(false); setSaved(true)
     setIsConfigOpen(false)
@@ -114,9 +114,9 @@ export default function WhatsAppPage() {
                 {isConectado ? <Smartphone className="h-7 w-7 text-emerald-600" /> : <QrCode className="h-7 w-7 text-amber-600" />}
               </div>
               <div>
-                <h3 className="font-semibold">{isConectado ? "WhatsApp configurado" : "WhatsApp nao configurado"}</h3>
+                <h3 className="font-semibold">{isConectado ? "WhatsApp configurado" : "WhatsApp não configurado"}</h3>
                 <p className="text-sm text-muted-foreground">
-                  {isConectado ? `Numero: ${config.whatsapp_numero}` : "Configure o token da API Z-API ou Evolution API para ativar o envio automatico"}
+                  {isConectado ? `Número: ${config.whatsapp_número}` : "Configure o token da API Z-API ou Evolution API para ativar o envio automático"}
                 </p>
               </div>
             </div>
@@ -129,13 +129,13 @@ export default function WhatsAppPage() {
           </CardContent>
         </Card>
 
-        {/* Aviso se nao configurado */}
+        {/* Aviso se não configurado */}
         {!isConectado && (
           <Card className="mb-6 border-blue-200 bg-blue-50/40">
             <CardContent className="flex items-start gap-4 p-5">
               <AlertCircle className="h-5 w-5 text-blue-500 mt-0.5 shrink-0" />
               <div>
-                <h4 className="font-semibold text-blue-800">Como ativar o WhatsApp automatico</h4>
+                <h4 className="font-semibold text-blue-800">Como ativar o WhatsApp automático</h4>
                 <p className="mt-1 text-sm text-blue-700">O DentistOS usa a <strong>Z-API</strong> (servico brasileiro, plano gratuito disponivel) para enviar mensagens automaticas. Clique no botao abaixo para criar sua conta e obter o token de acesso.</p>
                 <div className="mt-3 flex flex-wrap gap-3">
                   <Button size="sm" variant="outline" className="border-blue-300 text-blue-700" onClick={() => window.open("https://app.z-api.io", "_blank")}>
@@ -174,15 +174,15 @@ export default function WhatsAppPage() {
 
 
         {/* Tabs */}
-        <Tabs defaultValue="historico">
+        <Tabs defaultValue="histórico">
           <TabsList className="mb-6">
-            <TabsTrigger value="historico"><MessageCircle className="mr-2 h-4 w-4" />Historico</TabsTrigger>
+            <TabsTrigger value="histórico"><MessageCircle className="mr-2 h-4 w-4" />Histórico</TabsTrigger>
             <TabsTrigger value="templates"><Edit2 className="mr-2 h-4 w-4" />Templates</TabsTrigger>
             <TabsTrigger value="automacoes"><Settings className="mr-2 h-4 w-4" />Automacoes</TabsTrigger>
           </TabsList>
 
-          {/* Historico */}
-          <TabsContent value="historico">
+          {/* Histórico */}
+          <TabsContent value="histórico">
             <Card>
               <CardHeader><CardTitle className="text-lg">Mensagens enviadas</CardTitle></CardHeader>
               <CardContent>
@@ -240,7 +240,7 @@ export default function WhatsAppPage() {
                 {[
                   { label: "Confirmacao de consulta (48h antes)", value: templateConfirmacao, setter: setTemplateConfirmacao },
                   { label: "Lembrete do dia (2h antes)", value: templateLembrete, setter: setTemplateLembrete },
-                  { label: "Reativacao de paciente inativo", value: templateReativacao, setter: setTemplateReativacao },
+                  { label: "Reativação de paciente inativo", value: templateReativação, setter: setTemplateReativação },
                 ].map(t => (
                   <div key={t.label} className="grid gap-2">
                     <Label>{t.label}</Label>
@@ -280,12 +280,12 @@ export default function WhatsAppPage() {
           <TabsContent value="automacoes">
             <div className="grid gap-6 lg:grid-cols-2">
               <Card>
-                <CardHeader><CardTitle className="text-lg">Envios automaticos</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-lg">Envios automáticos</CardTitle></CardHeader>
                 <CardContent className="space-y-6">
                   {[
                     { label: "Confirmacao 48h antes", desc: "Pede confirmacao da consulta 2 dias antes", val: autoConfirmacao, set: setAutoConfirmacao },
                     { label: "Lembrete 2h antes", desc: "Lembrete no dia da consulta", val: autoLembrete, set: setAutoLembrete },
-                    { label: "Reativacao de inativos", desc: "Mensagem para pacientes sem consulta ha 6 meses", val: autoReativacao, set: setAutoReativacao },
+                    { label: "Reativação de inativos", desc: "Mensagem para pacientes sem consulta ha 6 meses", val: autoReativação, set: setAutoReativação },
                     { label: "Aniversariantes", desc: "Felicitacoes no dia do aniversario", val: autoAniversario, set: setAutoAniversario },
                   ].map(item => (
                     <div key={item.label} className="flex items-center justify-between">
@@ -325,9 +325,9 @@ export default function WhatsAppPage() {
                 </Button>
               </div>
               <div className="grid gap-2">
-                <Label>Numero do WhatsApp (com DDD)</Label>
-                <Input placeholder="Ex: 5511999990000" value={numero} onChange={e => setNumero(e.target.value)} />
-                <p className="text-xs text-muted-foreground">Apenas numeros, sem espacos ou caracteres especiais</p>
+                <Label>Número do WhatsApp (com DDD)</Label>
+                <Input placeholder="Ex: 5511999990000" value={número} onChange={e => setNúmero(e.target.value)} />
+                <p className="text-xs text-muted-foreground">Apenas números, sem espacos ou caracteres especiais</p>
               </div>
               <div className="grid gap-2">
                 <Label>Token da API (Z-API ou Evolution API)</Label>
@@ -337,7 +337,7 @@ export default function WhatsAppPage() {
             </div>
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsConfigOpen(false)}>Cancelar</Button>
-              <Button disabled={saving || !token || !numero} className="bg-[#00C9A7] text-[#0A2540]" onClick={saveConfig}>
+              <Button disabled={saving || !token || !número} className="bg-[#00C9A7] text-[#0A2540]" onClick={saveConfig}>
                 {saving ? "Salvando..." : "Salvar e ativar"}
               </Button>
             </div>
@@ -359,7 +359,7 @@ export default function WhatsAppPage() {
               <div className="grid gap-2">
                 <Label>Mensagem *</Label>
                 <textarea className="min-h-[100px] w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
-                  placeholder="Ola {{nome}}, sua consulta foi concluida com sucesso..."
+                  placeholder="Ola {{nome}}, sua consulta foi concluída com sucesso..."
                   value={novoTemplateTexto} onChange={e => setNovoTemplateTexto(e.target.value)} />
               </div>
               <div className="flex flex-wrap gap-2">

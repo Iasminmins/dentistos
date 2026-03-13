@@ -72,11 +72,11 @@ export default function LoginPage() {
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
             className="mt-4 text-lg text-white/60">
-            Sua clinica esta esperando. Acesse o dashboard e veja como sua agenda esta hoje.
+            Sua clínica esta esperando. Acesse o dashboard e veja como sua agenda esta hoje.
           </motion.p>
         </div>
         <div className="rounded-2xl bg-white/5 p-6 backdrop-blur-sm">
-          <p className="text-white/80">&ldquo;O DentistOS transformou a forma como gerencio minha clinica.&rdquo;</p>
+          <p className="text-white/80">&ldquo;O DentistOS transformou a forma como gerencio minha clínica.&rdquo;</p>
           <div className="mt-4 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#00C9A7] font-semibold text-[#0A2540]">MF</div>
             <div>
@@ -104,7 +104,7 @@ export default function LoginPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <h2 className="font-display text-3xl font-bold text-[#0A2540]">Entrar na sua conta</h2>
             <p className="mt-2 text-gray-600">
-              Nao tem uma conta?{" "}
+              Não tem uma conta?{" "}
               <Link href="/cadastro" className="font-medium text-[#00C9A7] hover:underline">Criar conta gratis</Link>
             </p>
           </motion.div>
